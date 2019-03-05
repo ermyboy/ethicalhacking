@@ -1,0 +1,3 @@
+Inizio con la scansione con nmap
+
+nmap -sV -sC -oA 10.10.1098

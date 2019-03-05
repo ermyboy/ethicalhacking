@@ -1,3 +1,5 @@
 Inizio con la scansione con nmap
 
-nmap -sV -sC -oA 10.10.1098
+nmap -sV -sC -oA 10.10.10.98
+
+ottenuto il risultato, inizio dal controllo dell'ftp server

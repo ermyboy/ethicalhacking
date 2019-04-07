@@ -1,0 +1,59 @@
+***METASPLOIT***
+
+	AGGIORNARE METASPLOIT
+		apt install metasploit-framework
+
+	INIZIALIZZARE IL DB DI METASPLOIT
+		msfdb init
+
+	GENERARE LA CACHE INTERNA
+		db_rebuild_cache
+
+	RICERCA
+		search
+		search type: exploit cve:2018 platform:windows
+
+	BANNER
+		banner
+
+	VARIABILI
+		get --> variabile
+		getg --> variabile globale
+
+	LISTA SESSIONI METERPRETER (sistemi compromessi)
+		sessions
+		sessions -l (numero sessione)
+		sessions -k (chiude una sessione)
+
+	CARICARE UN PLUGIN
+		load (nome del plugin)
+		unload (rimuove il plugin)
+
+	SALVARE LA CONFIGURAZIONE DI METASPLOIT
+		save (salva la configurazione di metasploit pe rusi futuri)
+
+	SALVARE I COMANDI DI METASPLOIT IN UN FILE
+		spool (/percorso/nomefile)
+		spool off (interrompere lo spool)
+
+	MOSTRARE OPZIONI MODULO
+		show options (opzioni di base)
+		advanced (opzioni avanzate)
+
+***METERPRETER***
+
+	USCIRE DA METERPRETER
+		Exit
+
+	USCIRE DALLA SESSIONE DI METERPRETER LASCIANDOLA ATTIVA
+		background
+
+	INTERROGARE LE SESSIONI ATTIVE
+		sessions (numero sessione)
+
+	NAVIGARE DENTRO UNA SESSIONE
+		shell
+		exit (esci dalla shell senza chiudere metermpreter)
+
+	MIGRARE PAYLOAD DA UNA SESSIONE ALL'ALTRA
+migrate (pid)

@@ -1,0 +1,13 @@
+Installare OpenVas
+    aggiornare Kali:
+        apt update && apt dist-upgrade
+    installare tutti i pacchetti di openvas
+        apt install openvas* greenbone-security-assistant* redis-server
+    lanciare da shell il comando
+        openvas-setup
+    lanciare da shell il comando
+        openvas-start
+    verificare che il comando
+        openvas-check-setup non riporti errori
+
+openvasmd --user=admin --new-password=

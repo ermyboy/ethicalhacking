@@ -3,11 +3,23 @@
 	AGGIORNARE METASPLOIT
 		apt install metasploit-framework
 
+	AVVIARE POSTGRES SQL ALL'AVVIO DEL PC
+	    update-rc.d postgresql enable
+
 	INIZIALIZZARE IL DB DI METASPLOIT
 		msfdb init
 
 	GENERARE LA CACHE INTERNA
 		db_rebuild_cache
+
+    CARTELLA DOVE SONO SALVATI GLI EXPLOIT
+        /usr/share/metasploit-framework/modules/exploits
+
+    CARTELLA DOVE SONO SALVATI I PLUGINS
+        /usr/share/metasploit-framework/plugins
+
+    CARTELLA DOVE SONO SALVATE LE WORDLISTS
+        /usr/share/metasploit-framework/data/wordlists
 
 	RICERCA
 		search

@@ -1,0 +1,15 @@
+scaricare ed installare Metasploitble3
+
+connettersi a https://github.com/rapid7/metasploitable3 e scaricare il file zip
+
+scaricare Packer https://www.packer.io/downloads.html
+
+scompatta Packer sotto C:\Program Files\Packercmd
+
+Aggiungi la directory di Packer alle variabili d'ambiente di windows
+
+controlla che la odifica si a andata a buon fine, aprendo cmd e digitanto packer.exe --version
+
+Scarica l'ultima versione di Vagrant e procedi con l'installazione
+
+

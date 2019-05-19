@@ -1,0 +1,214 @@
+E' possibile effettuare la sansione della rete su piu' livelli del modello ISO/OSI.
+
+SCANSIONE A LIVELLO 2
+
+Partiremo da quella a livello data e, per cominciare, ti introduco il primo strumento che utilizzeremo: ARPING.
+La scansione a livello data (livello 2) assume significato solo se effettuata all’interno di una rete locale (LAN).
+Nelle reti locali i concetti che entrano in gioco sono indirizzi MAC e protocollo ARP.
+Ora connettiamoci alla macchina Kali Linux e lanciamo una scansione di livello data (denominata ARP scan) verso la macchina Windows in cui abbiamo installalto KFSensor.
+
+Il comando è: “arping indirizzoIP -c 2”. Dove 2 è il numero di pacchetti che invieremo, ma puoi inserire il valore che preferisci.
+
+Se la macchina è attiva e connessa sulla rete, verrà visualizzato l’output che segue:
+
+Ricorda di tenere sempre attivo Wireshark, filtrando per parola chiave ARP, e di analizzare il traffico di rete.
+
+Inoltre sarebbe meglio effettuare l’analisi su entrambe le macchine.
+NMAP E SCANSIONE DI RETE A LIVELLO 2
+
+Nmap è il tool di scansione della rete più diffuso e, probabilmente, quello più affidabile e versatile.
+
+Ci permette di effettuare molteplici tipi di scansione, dal livello 2 in poi, e contiene tutta una serie di funzionalità aggiuntive, come scanner di vulnerabilità e moduli per effettuare l’enumerazione di un sistema.
+
+In questo articolo ci occuperemo di effettuare una scansione di livello 2 sfruttando Nmap. Ma prima vorrei mostrarti le fasi coi cui Nmap effettua il proprio lavoro.
+
+    Name resolution.
+    NSE script pre-scan phase.
+    Host discovery. Noi ci troviamo proprio in questo caso.
+    Parallel reverse name resolution.
+    Port or Protocol scan.
+    Service version detection.
+    OS fingerprinting.
+    Traceroute.
+    NSE portrule and hostrule script scanning phase.
+    -NSE post-scan phase.
+
+Per ora focalizziamoci sulla fase di “host discovery”.
+
+Dovremo dire a Nmap di non effettuare alcun tipo di scansione delle porte, limitandosi a verificare quali host sono attivi nella rete.
+
+Si tratta di una scansione di livello 2 basata sul protocollo ARP e sull’indirizzo MAC.
+
+L’opzione che si utilizza per istruire Nmap è “-sn”. Per cui il comando da lanciare sarà:
+
+192.168.1.100-150 è il range di indirizzi IP che vogliamo testare.
+
+Potrebbe essere un singolo indirizzo oppure una sottorete.
+
+Teniamo sempre sotto controllo la situazione con Nmap per verificare quello che accade:
+
+Come ti ho già fatto presente, questo tipo di scansione a livello 2 ha senso solo in contesti locali dove si comunica con gli indirizzi MAC.
+
+Fuori dalla rete LAN si utilizza esclusivamente l’indirizzo IP e perciò la scansione della rete si pone ad un livello più alto, ossia il livello rete “scansione a livello 3”.
+
+SCANSIONE LIVELLO 3
+La scansione a livello 2 ha senso solo in contesti locali dove si comunica con gli indirizzi MAC.
+Fuori dalla rete LAN si utilizza esclusivamente l’indirizzo IP e perciò la scansione della rete si pone ad un livello più alto, ossia il livello rete “scansione a livello 3”.
+
+Conviene utilizzare l’indirizzo IP e non l’hostname così da non dover effettuare una query DNS ed eventualmente alterare così i risultati ottenuti. Ovviamente con i dovuti limiti.
+    Nel caso di un web server che ospita più siti web, ha senso utilizzare l’hostname e la risoluzione DNS.
+    Se si effettua la scansione in reti di grandi dimensioni ci potrebbero essere dei problemi legati al tempo necessario per completare quest’ultima. Per questo conviene utilizzare un piccolo campione di queste ultime o soffermarsi solo su un piccolo range di porte.
+
+PING SCAN CON NMAP
+
+Procediamo adesso con il tipo più semplice di scansione a livello 3.
+
+Utilizzeremo a tal proposito un particolare protocollo denominato ICMP (Internet Control Message Protocol), ciò implica che non stiamo utilizzando nè il protocollo TCP nè quello UDP.
+
+L’ICMP svolge svariate funzioni di controllo, tra cui la verifica di raggiungibilità di un certo host all’interno di un certo contesto di rete.
+
+Per farlo, utilizziamo il comando PING specificando con l’opzione “-c” il numero di pacchetti ICMP che vogliamo inviare alla macchina o alla rete bersaglio.
+
+Di seguito osserviamo che la macchina bersaglio ha risposto al nostro comando, e quindi è attiva nella rete.
+
+Non dimenticarti di controllare il traffico di rete con Wireshark. Utilizza pure il filtro “icmp”.
+
+Wireshark ci indica chiaramente che stiamo utilizzando il protocollo ICMP e che lo scambio di pacchetti avviene come segue:
+
+    Echo request. L’host attaccante ha inviato il pacchetto ICMP alla macchina bersaglio.
+    Echo reply. La macchina bersaglio ha inviato il pacchetto di risposta alla macchina attaccante.
+
+PROTOCOLLO TCP E UDP
+
+Nei precedenti articoli, abbiamo analizzato la scansione a livello 2 (ARP discovery) e a livello 3 (PING scan) del modello ISO/OSI. Passiamo adesso al livello 4, il livello trasporto.
+
+Il livello trasporto è principalmente composto da 2 protocolli: TCP e UDP.
+
+La differenza principale è che il TCP è un protocollo orientato alla connessione, mentre UDP è privo di connessione.
+
+Mi spiego meglio: quando abbiamo la necessità di utilizzare TCP dobbiamo farlo creando una connessione tra le due parti.
+
+Queste ultime devono accordarsi sul fatto di voler/poter comunicare, altrimenti lo scambio di informazioni non avverrà.
+
+Nel protocollo UDP, che invece è senza connessione, non esiste alcuna necessità di mettersi d’accordo sulla comunicazione che seguirà: lo scambio dati avverrà comunque.
+
+Da questo si può facilmente dedurre che TCP è un protocollo affidabile che ci garantisce, salvo rare e gestibili eccezioni, l’avvenuta ricezione delle informazioni inviate.
+
+Con UDP, al contrario, non abbiamo nessuna certezza.
+
+D’altro canto, UDP è un protocollo molto rapido, mentre TCP risulta meno performante a causa di tutti i controlli aggiuntivi che deve effettuare.
+
+Osserviamo di quali campi si compone un pacchetto TCP e uno UDP.
+FLAG DI CONTROLLO TCP
+
+Il protocollo TCP effettua il controllo della connessione.
+
+Per farlo utilizza una serie di informazioni aggiuntive all’interno del pacchetto di rete, e quelli che ci interessano sono i cosiddetti “flag TCP”. Sono sei, vediamoli:
+
+    SYN.
+    ACK.
+    RST.
+    FIN.
+    PSH.
+    URG.
+
+I più significativi sono SYN e ACK che prendono parte al “Three-way handshake”, ovvero la procedura di instaurazione della comunicazione da parte del protollo TCP.
+
+Comunque presenti sono il flag RST, che indica la necessità di effettuare il reset della connessione magari a causa di errori e il flag FIN che indica che non ci sono altri dati da recepire dal mittente.
+IL THREE-WAY HANDSHAKE
+
+Questo meccanismo di creazione della connessione è basato esclusivamente sui flag SYN e ACK.
+
+Supponiamo di avere due macchine:
+
+    PC A che vuole instaurare la connessione.
+    PC B che attende l’instaurarsi della connessione.
+
+Lo scambio avviene come segue:
+
+    PC A imposta il flag SYN del pacchetto che invierà a PC B.
+    PC B ricevuto quest’ultimo, imposta i flag SYN e ACK del pacchetto che invierà a PC A.
+    PC A ricevuto il SYN-ACK, invierà un pacchetto con il flag ACK impostato a PC B.
+    Se tutto è avvenuto correttamente la connessione è adesso instaurata.
+
+Per cui, il three-way handshake è uno scambio di pacchetti tra due entità che utilizzano, per mettersi d’accordo sulla comunicazione, i flag TCP (SYN e ACK).
+
+Il tutto è riscontrabile tramite Wireshark come puoi osservare nell’immagine seguente:
+
+Il pacchetto numero 25 ha il flag SYN attivo, il 26 è la replica con SYN e ACK, il 27 con ACK offre il via libera all’avvio della comunicazione.
+
+Giusto il dettaglio del primo pacchetto dove il flag SYN è settato al valore 1, ovverò è attivo:
+CREAZIONE DI PACCHETTI DI RETE PERSONALIZZATI
+
+Esistono strumenti software che permettono la creazione e la modifica dei pacchetti che viaggiano all’interno della rete (packet crafting).
+
+Quello che ti voglio presentare è “Colasof Packet Builder”. Quest’ultimo ti fornisce, innanzitutto, la possibilità di scegliere il tipo di pacchetto da creare/modificare.
+
+Scelta la tipologia, ad esempio TCP, iniziamo con la creazione del pacchetto:
+
+Possiamo, tra le altre cose, settare i flag TCP, visti in precedenza:
+SCANSIONE A LIVELLO 4 – CONNECT SCAN
+
+Vediamo adesso la tecnica più semplice per effettuare una scansione a livello 4: la CONNECT SCAN.
+
+Questo tipo di scansione non fa altro che instaurare in maniera completa la connessione TCP.
+
+In altri termini, il three-way handshake viene completato, rendendo la scansione molto “rumorosa” e facilmente individuabile.
+
+Per effettuare la simulazione è consigliabile utilizzare KFSensor, Wireshark e Nmap.
+
+    Avviamo KFSensor e scegliamo quale servizio monitorare, ad esempio la porta 80.
+    Avviamo Wireshark e mettiamoci in ascolto sull’interfaccia di rete corretta, filtrando per TCP.
+    Avviamo Nmap e lanciamo quidi la scansione:
+
+Con Wireshark verifichiamo che la scansione sia avvenuta:
+
+Come prova, verifichiamo che anche su KFSensor la scansione sia stata rilevata.
+SCANSIONE A LIVELLO 4 – SYN SCAN
+
+Vediamo adesso la scansione di tipo SYN.
+
+Quest’ultima, a differenza della CONNECT, non effettua in maniera completa il three-way handshake.
+
+Potremmo quasi affermare che sia effettuato a metà.
+
+Lo scambio avviene come segue:
+
+    L’attaccante invia un pacchetto con il flag SYN impostato.
+    La vittima risponde con una pacchetto dove sono impostati i flag SYN e ACK.
+    L’attaccante, a questo punto, non completa l’handshake ma invia un pacchetto con il flag RST, cosi da forzare un reset della connessione per non instaurarla completamente.
+
+Questa è una scansione relativamente “silenziosa”.
+
+Se nella rete bersaglio è presente un sistema che traccia le connessioni instaurate, non registrerà questo tentativo di connessione, perchè nessuna connessione è stata instaurata in modo completo.
+
+Anche qui, avviamo Nmap e lanciamo il seguente comando:
+
+Verifichiamo la scansione con Wireshark e osserviamo il flag RST inviato dalla macchina attaccante:
+
+Infine, verifichiamo con KFSensor, che riesce addirittura a rilevare con esattezza il nostro tentativo di SynScan:
+
+Ovviamente Nmap riesce a completare con successo questa scansione:
+SCANSIONE A LIVELLO 4 – UDP SCAN
+
+Le scansioni precedenti sono relative al protocollo TCP ma anche il protocollo UDP può fornire dei risultati interessanti, perchè spesso sottovalutato dagli amministratori di rete che non lo proteggono in maniera adeguata.
+
+Ricorda innanzitutto che il protocollo UDP è senza connessione e quindi si comporta in modo differente rispetto al TCP.
+
+Nello specifico, se viene lanciata una scansione su una determinata porta e non riceviamo alcuna risposta, allora possiamo supporre che la porta sia aperta.
+
+In caso contrario riceveremo un messaggio di errore ICMP che, in breve, significa che la porta è chiusa o non fornisce informazioni significative.
+
+Configuriamo KFSensor, per metterci in ascolto e simulare un servizio di tipo UDP, con porta 53413. Ad esempio:
+
+Mettiamoci in ascolto con Wireshark e con Nmap lanciamo la scansione UDP sulla porta scelta:
+
+Analizziamo il traffico con Wireshark:
+
+La prima e la quarta riga mostrano il pacchetto UDP inviato e, dal momento che non troviamo alcun pacchetto ICMP, possiamo supporre che la scansione sia andata a buon fine e che la porta 53413 sia effettivamente aperta.
+
+Proviamo con una porta UDP casuale (che quindi non sarà sicuramente aperta) e vediamone il risultato con Wireshark:
+
+Come si osserva, in questo caso, il pacchetto ICMP torna immediatamente indietro segnalandoci che la porta è chiusa o filtrata. Noi sappiamo che invece è inesistente.
+
+A questo link puoi trovare la documentazione ufficiale di Nmap.

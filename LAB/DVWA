@@ -1,5 +1,9 @@
 Studio delle Vulnerabilità presenti sulla VM DVWA.
 
+Installazione della VM:
+https://github.com/ethicalhack3r/DVWA
+
+
 VULNERABILITA'
 
 ***Beef xss framework***
@@ -10,8 +14,11 @@ VULNERABILITA'
 		3. fino a quando la tab della vittima resta aperta, beef puo' intercettare ed inoltrare exploit
 
 ***XSS Reflected***
+inserisco lo script nella URL e lo faccio reindirizzare sul mio sito. ES: www.google.it/123p=?
 	Ottengo nella stessa pagina il risultato dello script che passo
 	Nome<script>alert(ciao mondo!)</script>
+
+NOTE: SVG Onload
 
 	LEVEL LOW:
 		<script>alert(document.cookie)</script>

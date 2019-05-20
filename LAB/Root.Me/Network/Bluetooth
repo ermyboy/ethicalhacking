@@ -1,0 +1,1 @@
+hcidump -r ch18.bin | sed "s|'||g" | sort -u | awk '/bdaddr.*name/{ printf $4$6 }' | sha1sum | cut -d' ' -f1

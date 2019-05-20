@@ -9,12 +9,12 @@
 # [+] Twitter: @Creased_                                   #
 #==========================================================#
 
-import urllib, base64, re, time
+import urllib.request, base64, re, time
 from datetime import datetime, timedelta
 
 tstamp = None
 url = 'http://challenge01.root-me.org/forensic/ch13/ch13.txt'
-file = urllib.urlopen(http://challenge01.root-me.org/forensic/ch13/ch13.txt)
+file = urllib.request.urlopen('http://challenge01.root-me.org/forensic/ch13/ch13.txt')
 data = []
 i = 0
 

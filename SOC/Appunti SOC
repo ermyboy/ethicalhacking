@@ -1,0 +1,37 @@
+Accesso a CNH
+    QRadar
+        f66701C - F53139C
+        Stocazz1!
+
+    Redmine
+        f66701C
+        Stocazz4
+
+Accedere da DC
+
+edit search
+    unasigned
+    inactive
+prendo la source ip e lo cerco su neetseeker
+se il risultato e'   FIAT GROUP/FGA, non fare
+se all'interno delle sourceIP o dst_IP c'e una sola di CNH, lavorarla specificando quante dst o source fanno parte di CNH
+
+
+
+Description: FireEye. generalmente l'hostname e' in chiaro. prendere l'hostname e cercare nel sistema di ticket. (vedere se e' duplicato)
+    OFFENSE INCIDENT / MALICIOUS CODE
+
+Per aprire ticket:
+    new issue
+        nell'oggetto mettere il dominio
+
+Assigned ->  L2 Analyst
+
+inserire com'e' censito su virustotal e urlscan.io  urlvoid
+
+
+
+Accesso su MCAfee
+    MCAfee -> 161.27.170.224 (vedi KeePass)
+    Service Desk -> https://servicedesk.eng.it/geocall/loginservlet
+

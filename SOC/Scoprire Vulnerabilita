@@ -1,0 +1,8 @@
+XSS
+
+Per scoprire le vulnerabilita' XSS:
+
+    XSS Reflected -> controllo la URL per vedere se sono presenti dei TAG malevoli
+    XSS DOM -> controllo se c'e' del codice malevolo nella GET del pacchetto
+    XSS Stored -> controllo se e' stato inserito del codice malevolo nella POST del payload.
+

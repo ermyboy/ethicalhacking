@@ -1,11 +1,11 @@
 Accesso a CNH
     QRadar
-        f66701C - F53139C
+        f66701C - F53139C - F53128C (Stocazz12!)
         Stocazz1!
 
     Redmine
         f66701C
-        Stocazz4
+        Stocazz1!
 
 Accedere da DC
 
@@ -13,7 +13,7 @@ edit search
     unasigned
     inactive
 prendo la source ip e lo cerco su neetseeker
-se il risultato e'   FIAT GROUP/FGA, non fare
+se il risultato e'   FIAT GROUP/FCA, non fare
 se all'interno delle sourceIP o dst_IP c'e una sola di CNH, lavorarla specificando quante dst o source fanno parte di CNH
 
 

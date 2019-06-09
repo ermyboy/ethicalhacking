@@ -6,3 +6,127 @@ CentOS
 
 Ubuntu - Riavviare il servizio di rete
     sudo  systemctl restart NetworkManager.service
+
+
+Laboratorio: montare server MySql
+
+############## installare server linux ##############
+
+############## installare server SSH ##############
+https://www.html.it/pag/18676/configurare-ssh-e-ftp-per-accedere-da-remoto/
+
+ SSH (Secure Shell) è un protocollo di rete crittografico utilizzato per stabilire un canale sicuro tra due computer connessi in rete. L’impiego di tecniche crittografiche consente di ottenere confidenzialità ed integrità, cioè rendere impossibile a terzi l’intercettazione e/o alterazione delle informazioni trasmesse sul canale. Queste caratteristiche hanno reso SSH una valida e più sicura alternativa a protocolli come Telnet ed FTP.
+
+In ambiente GNU/Linux, SSH è reso disponibile dal progetto OpenSSH (originariamente OpenBSD Secure Shell). Si tratta di un insieme di programmi sia client che server che sfruttano il protocollo SSH per i servizi di accesso remoto e trasferimento di file. Con essi è possibile collegarsi ad un server GNU/Linux da un altro computer connesso in rete ed impartire comandi o trasferire file come se si stesse usando la console locale (tastiera e monitor direttamente connessi al computer).
+Installazione
+
+Per attivare il server OpenSSH è sufficiente installare il pacchetto openssh-server, digitando il comando:
+
+# apt-get install openssh-server
+
+In ambiente Ubuntu, la configurazione di default disabilita l’accesso remoto per l’utente root (per questioni di sicurezza) e lo abilita per tutti gli altri utenti. Questo non preclude la possibilità di effettuare operazioni di amministrazione da remoto, poichè gli utenti che effettuano il login possono comunque utilizzare sudo.
+Configurazione del firewall
+
+Il protocollo SSH utilizza la porta TCP 22. Pertanto, affinchè sia possibile connettersi al server SSH, è necessario assicurarsi che la porta 22 sia accessibile. Il firewall predefinito in ambiente Ubuntu è ufw (Uncomplicated FireWwall), e possiamo interagire con esso al fine di abilitare la porta TCP 22 con il comando seguente:
+
+# ufw allow ssh/tcp
+
+Per avere conferma dell’avvenuta apertura della porta 22, digitiamo il comando:
+
+# ufw status
+
+Copy
+
+Il comando produrrà in output la lista delle porte aperte.
+
+Accesso di shell remoto
+
+SSH è un protocollo client-server, al pari di altri quali ad esempio HTTP. Quindi, se per collegarsi ad un server web è necessario utilizzare un browser (un client HTTP), per collegarsi ad un server SSH è necessario usare un opportuno client.
+
+Il client per la shell remota è incluso nel pacchetto OpenSSH e si chiama appunto ssh. In ambienti Unix/Linux i client del pacchetto OpenSSH sono spesso pre-installati nel sistema. Pertanto, con una macchina OSX o GNU/Linux, non è necessario installare alcun pacchetto aggiuntivo per collegarsi ad un server SSH.
+
+Per i client Windows esistono diversi porting di OpenSSH tra i quali uno curato dalla stessa Microsoft per PowerShell.
+
+L’accesso avviene indicando il nome utente, il nome (o l’indirizzo IP) del server e la propria password. Ad esempio, il comando:
+
+# ssh pippo@mioserver.com
+
+permette di effettuare il login al server mioserver.com con il nome utente pippo.
+
+Alla prima connessione, il client ssh chiede all’utente di confermare l’identità del server. In caso di risposta affermativa il client memorizzerà la chiave che identifica univocamente il server. Questo permette di verificare l’autenticità del server ogni qualvolta si effettua una nuova connessione.
+
+Trasferimento di file
+
+Analogamente all’accesso di shell, anche il trasferimento di file richiede un client apposito. OpenSSH fornisce due client distinti, scp e sftp, versioni sicure rispettivamente dei comandi cp (copia) e ftp (client FTP). La sintassi dei comandi scp e sftp si basa sui comandi cp e ftp dai quali prendono il nome.
+
+Il comando scp è quindi principalmente impiegato per effettuare trasferimenti singoli (ad esempio, l’upload di un file .tar.gz dal client verso il server). Ad esempio, per trasferire il file sito.tar.gz e copiarlo nella directory /var/www del server, il comando da digitare è:
+
+# scp sito.tar.gz pippo@mioserver.com:/var/www/
+
+ove pippo è il nome utente con cui effettuare il login e mioserver.com è l’indirizzo del server, in riferimento all’esempio precedente.
+
+SecureFTP (sftp) funziona invece collegandosi al server allo stesso modo di ssh. Digitando:
+
+# sftp pippo@mioserver.com
+
+L’utente pippo effettuerà il login sul server mioserver.com. A questo punto, il comando sftp avvia un interprete interattivo che risponde ai comandi del protocollo FTP quali CD, GET, PUT, mkdir, ed altri. La lista completa dei comandi riconosciuti è visualizzata digitando il comando help.
+
+Anche in questo caso esistono dei client alternativi dotati di interfaccia grafica, che rendono le operazioni di connessione, gestione delle password e trasferimento di file più semplici. In ambiente GNU/Linux, la maggior parte dei file browser più popolari implementa internamente un client sftp. Ad esempio, sia Nautilus (il file browser di GNOME) che Dolphin (il file browser di KDE) permettono di collegarsi ad un server via SSH semplicemente digitando sftp://miosito.com nella barra dell’indirizzo. Il file browser richiederà nome utente e password e in caso di login corretto mostrerà i file e le directory del server proprio come se si trattasse di file memorizzati in locale.
+
+############## dare ip fisso a server ##############
+https://gnulinuxarea.wordpress.com/2010/10/22/ubuntu-come-impostare-un-ip-statico-via-terminale-su-connessione-ethernet/
+
+Per impostare un IP statico in Ubuntu (e, pur non usandole, suppongo tutte le distro basate su Debian, inclusa ovviamente quest’ultima) occorre modificare il file /etc/network/interfaces.
+
+Per prima cosa creiamo una copia del file originale:
+
+sudo cp /etc/network/interfaces /etc/network/interfaces.old
+
+Adesso possiamo modificare il contenuto del file. L’esempio che segue è basato su una rete con IP range del tipo 192.168.0.x e ho inserito all’inizio il contenuto del file interfaces originale:
+
+sudo nano /etc/network/interfaces
+
+## FILE ORIGINALE
+
+# This file describes the network interfaces available on your system
+# and how to activate them. For more information, see interfaces(5).
+
+# The loopback network interface
+auto lo
+iface lo inet loopback
+
+# The primary network interface
+auto eth0
+iface eth0 inet dhcp
+
+##
+
+Ed ecco come va modificato:
+
+# This file describes the network interfaces available on your system
+# and how to activate them. For more information, see interfaces(5).
+
+# The loopback network interface
+auto lo
+iface lo inet loopback
+
+# The primary network interface
+auto eth0
+iface eth0 inet static
+address 192.168.0.199
+netmask 255.255.255.0
+network 192.168.0.0
+broadcast 192.168.0.255
+gateway 192.168.0.1
+dns-nameserver 208.67.222.222 212.216.112.112
+
+##
+
+In pratica basta sostituire dhcp con static e aggiungere manualmente i valori address (l’IP del computer), netmask, network (il range di rete con ultimo valore 0), broadcast, gateway (l’IP del router) e dns-nameserver (gli IP dei server DNS)
+
+Una volta salvato il file riavviamo il servizio di rete con:
+
+sudo /etc/init.d/networking restart
+
+E il gioco è fatto…
+

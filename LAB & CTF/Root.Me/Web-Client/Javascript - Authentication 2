@@ -1,0 +1,25 @@
+Aprire il sorgente della pagina -> ctrl + U
+
+Nelle prime righe viene riportata la URL del file login.js
+
+Aprire il file login.js e leggere il contenuto:
+
+********
+    function connexion(){
+        var username = prompt("Username :", "");
+        var password = prompt("Password :", "");
+        var TheLists = ["GOD:HIDDEN"];
+        for (i = 0; i < TheLists.length; i++)
+        {
+            if (TheLists[i].indexOf(username) == 0)
+            {
+                var TheSplit = TheLists[i].split(":");
+                var TheUsername = TheSplit[0];
+                var ThePassword = TheSplit[1];
+                if (username == TheUsername && password == ThePassword)
+********
+
+Scrivere nel campo Username la prima parte della variabile TheList: "GOD"
+Scrivere nel campo Password la seconda parte della variabile TheList: "HIDDDEN"
+
+Il portale mostrera' il messaggio "You can use this password to validate this challenge (uppercase)"

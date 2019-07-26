@@ -1,15 +1,3 @@
-Lanciata scansione con OpenVas. Riscontrata la seguente vulnerabilità:
-    SSH Weak Encryption Algorithms Supported
-
-Inizio la ricerca su exploit-db per capire come sfruttare la vulnerabilità.
-
-root@ermy:~/Scrivania/htb/Machine/Haystack_10.10.10.115# searchsploit SSH Weak
-------------------------------------------------------------------- ----------------------------------------
- Exploit Title                                                     |  Path
-                                                                   | (/usr/share/exploitdb/)
-------------------------------------------------------------------- ----------------------------------------
-SSH 1.2.x - Secure-RPC Weak Encrypted Authentication               | exploits/unix/local/20560.c
-------------------------------------------------------------------- ----------------------------------------
 
 https://logz.io/learn/complete-guide-elk-stack/#installing-elk
 

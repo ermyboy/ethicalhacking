@@ -1,0 +1,13 @@
+INSTALLARE DJANGO
+  python -m venv v_env
+  source bin/activate
+  pip install django
+
+AVVIARE DJANGO
+    python manage.py runserver
+
+CREARE NUOVO PROGETTO
+  django-admin startproject [nomeprogetto]
+
+CREARE UN'APPLICAZIONE
+  python manage.py startapp prima_app

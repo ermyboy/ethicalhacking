@@ -1,0 +1,27 @@
+Avviare un container
+  docker run [nomecontainer]
+
+Avviare un container per 10 secondi
+  docker run [nomecontainer] sleep 10
+
+Avviare una bash in un container
+  docker run -it [nomecontainer] /bin/bash
+
+Stoppare un container
+  docker stop [ID_container]
+
+Uscire da un container
+  ctrl + P
+  ctrl + Q
+
+Avviare in background un container
+  docker run -d -it [nomecontainer] /bin/bash
+
+Accedere all'interno del docker in background
+  docher attach [ID_container]
+
+Startare un container
+  docker start [ID_container]
+
+Impostare una RESTART-POLICY (ovvero, riavviare il docker al riavvio del servizio)
+  docker -d -it --restart always [nomecontainer] /bin/bash

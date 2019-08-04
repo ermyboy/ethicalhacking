@@ -1,0 +1,5 @@
+python3 -m venv p_env
+source p_env/bin/activate
+
+(p_env) root@ermy:
+

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>I FORM</title>
+  </head>
+  <body>
+    <h1>Form</h1>
+
+    <form action="https://www.google.it" method="get">
+      <label for="email">Email: </label>
+      <input id="email" type="email" name="tuamail" placeholder="inserisci la mail" value="" required>
+      <label for="pwd">Password: </label>
+      <input id="pwd" type="password" name="tuapassword" placeholder="inserisci la tua password" value="" required>
+      <input type="submit" value="Invia">
+      <h3>Sei: </h3>
+      <label for="Donna">Donna</label>
+      <input id="Donna" type="radio" name="genere" value="Donna"><br>
+      <label for="Uomo">Uomo</label>
+      <input id="Uomo" type="radio" name="genere" value="Uomo"><br><br>
+      <h3>Parlaci di te</h3>
+      <textarea name="descrizione" rows="15" cols="50"></textarea>
+      <h3>Specializzazione</h3>
+      <select name="Specializzazione">
+        <option value="backend">Back End</option>
+        <option value="frontend">Front End</option>
+        <option value="fullstack">Full Stack</option>
+      </select><br>
+
+      <input type="checkbox" name="condizioni" value="Accetto le condizioni" required>prova checkbox
+      <br>
+      <input type="submit" name="" value="Entra">
+    </form>
+<br><br><br>
+<hr>
+    <form action="https://exchange.xforce.ibmcloud.com/ip/" method="GET">
+      <input type="text" placeholder="inserisci IP da cercare">
+      <input type="submit" value="Invia">
+    </form>
+
+
+
+
+  </body>
+</html>

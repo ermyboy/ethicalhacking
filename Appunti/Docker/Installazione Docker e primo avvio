@@ -1,0 +1,35 @@
+INSTALLARE DOCKER
+  Preparation - Add Docker PGP key:
+      curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add -
+
+    Configure Docker APT repository (Kali is based on Debian testing, which will be called buster upon release, and Docker now has support for it):
+      echo 'deb [arch=amd64] https://download.docker.com/linux/debian buster stable' > /etc/apt/sources.list.d/docker.list
+
+    Update APT:
+      apt-get update
+
+    Install Docker
+      If you had older versions of Docker installed, uninstall them:
+      apt-get remove docker docker-engine docker.io
+
+      Install Docker:
+      apt-get install docker-ce
+
+    Test:
+      docker run hello-world
+
+    After installation, Docker service will be started, but not enabled (i.e. it will not be started automatically after reboot). To start it:
+      systemctl start docker
+
+    To start Docker automatically upon reboot (do it on your own risk!):
+      systemctl enable docker
+
+
+SCARICARE UN DOCKER UBUNTU
+  docker pull ubuntu
+
+VEDERE SE HO IMMAGINI DOCKER SUL SISTEMA
+    sudo docker image ls
+
+AVVIARE Docker
+  docker run [nome-docker]

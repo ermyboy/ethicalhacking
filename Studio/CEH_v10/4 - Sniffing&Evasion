@@ -1,0 +1,18 @@
+ARP
+    Mostrare la cache ARP
+      arp -a
+    Cancellare la cache ARP
+      arp -d *
+      (oppure) netsh interface ip delete arpcache
+
+IPv6 Loopback address is 0000:0000:0000:0000:0000:0000:0000:0001 and may be edited all the way down to ::1
+
+
+PRISM (Planning Tool for Resource Integration, Synchronization and Management) used by NSA
+
+Active e Passive Sniffing
+  Passive Sniffing: plug in a sniffer and, without any other interaction needed, start pulling data packets to view at your leisure.
+  Active Sniffing: requires some additional work on you part, either from forcing network devices to play nicely with your effort.
+
+
+Span Port is one in which the switch configuration has been altered to send a copy of all framess from one port, or a succession of port, to another.

@@ -1,0 +1,159 @@
+BASTION - 10.10.10.134
+
+Inizio la scansione con nmap per vedere porte aperte e fare un pò di banner grubbing:
+    nmap -sC -sV -p- -T4 -oA bastion 10.10.10.134
+
+
+nmap output:
+nmap full port scan output
+
+As is clearly visible, most of the higher ports are either filtered or if opened, the services running on them aren’t indetified by the nmap.
+However the peculiar services running on the box are on port 22, 135, 139, 445. Also the service running on port 445 i.e microsoft-ds,
+it is used by windows to share files via SMB . Also, since it’s open, i am gonna try to connect it to via smbclient in kali linux.
+smb enumeration:-
+
+    smbclient -L 10.10.10.134 (l'opzione -L → host ip address).
+
+This command checks for the shared resources on smb. It asked for the password, which in most of the cases is blank, so just hit enter.
+
+output:
+smbclient resource query
+
+Interesting, there is a backup drive there and it’s openly available for sharing. Let’s connect to the Backups drive.
+enumerating the backups drive.
+
+We have got WindowsImageBackup folder there. let’s get into that to see if we could find something useful. Also we could just navigate through each folder just as we do in ssh or ftp.
+navigating inside the backups drive via SMB
+
+So, we have got .vhd files which are actually OS image, so either one can download it, mount it and then enumerate it locally to find any critical piece of information.
+
+Or, Alternatively, one can mount it over the network. Just like we do in network shared folders, but it will be slow. Still i prefer to mount it because these files are too large to download, as we will see later.
+
+Just to let you know, if we choose to mount it over the network, then we will have to mount the backups drive first to access all it’s contents and then we will have to mount the .vhd files separately to freely explore the image file.
+
+mount command:-
+
+    mount -t cifs -o username=root  //10.10.10.134/Backups /mnt/
+
+It will mount the whole Backups drive locally to the /mnt folder. You can choose any folder you wish, doesn’t really matter.
+navigating into the backups drive after mounting it locally
+
+now running a quick ls -lah * , we can gather info about files/folders, their size.
+
+    root@kali:/mnt/WindowsImageBackup/L4mpje-PC/Backup 2019–02–22 124351# ls -lah *
+    -rwxr-xr-x 1 root root 37M May 14 22:04 9b9cfbc3–369e-11e9-a17c-806e6f6e6963.vhd
+    -rwxr-xr-x 1 root root 5.1G May 14 22:26 9b9cfbc4–369e-11e9-a17c-806e6f6e6963.vhd
+    -rwxr-xr-x 1 root root 1.2K Feb 22 18:15 BackupSpecs.xml
+    -rwxr-xr-x 1 root root 1.1K Feb 22 18:15 cd113385–65ff-4ea2–8ced-5630f6feca8f_AdditionalFilesc3b9f3c7–5e52–4d5e-8b20–19adc95a34c7.xml
+    -rwxr-xr-x 1 root root 8.8K Feb 22 18:15 cd113385–65ff-4ea2–8ced-5630f6feca8f_Components.xml
+    -rwxr-xr-x 1 root root 6.4K Feb 22 18:15 cd113385–65ff-4ea2–8ced-5630f6feca8f_RegistryExcludes.xml
+    -rwxr-xr-x 1 root root 2.9K Feb 22 18:15 cd113385–65ff-4ea2–8ced-5630f6feca8f_Writer4dc3bdd4-ab48–4d07-adb0–3bee2926fd7f.xml
+    -rwxr-xr-x 1 root root 1.5K Feb 22 18:15 cd113385–65ff-4ea2–8ced-5630f6feca8f_Writer542da469-d3e1–473c-9f4f-7847f01fc64f.xml
+    -rwxr-xr-x 1 root root 1.5K Feb 22 18:15 cd113385–65ff-4ea2–8ced-5630f6feca8f_Writera6ad56c2-b509–4e6c-bb19–49d8f43532f0.xml
+    -rwxr-xr-x 1 root root 3.8K Feb 22 18:15 cd113385–65ff-4ea2–8ced-5630f6feca8f_Writerafbab4a2–367d-4d15-a586–71dbb18f8485.xml
+    -rwxr-xr-x 1 root root 3.9K Feb 22 18:15 cd113385–65ff-4ea2–8ced-5630f6feca8f_Writerbe000cbe-11fe-4426–9c58–531aa6355fc4.xml
+    -rwxr-xr-x 1 root root 7.0K Feb 22 18:15 cd113385–65ff-4ea2–8ced-5630f6feca8f_Writercd3f2362–8bef-46c7–9181-d62844cdc0b2.xml
+    -rwxr-xr-x 1 root root 2.3M Feb 22 18:15 cd113385–65ff-4ea2–8ced-5630f6feca8f_Writere8132975–6f93–4464-a53e-1050253ae220.xml
+
+    9b9cfbc4–369e-11e9-a17c-806e6f6e6963.vhd.lck:
+    total 8.5K
+    drwxr-xr-x 2 root root 0 May 14 21:08 .
+    drwxr-xr-x 2 root root 8.0K May 14 21:08 ..
+    drwxr-xr-x 2 root root 0 May 14 21:08 D04353.lck
+    -rwxr-xr-x 1 root root 512 May 14 21:08 E04353.lck
+
+As you can see, the size of the .vhd files, 5.1 GB and 37 MB. This is the soul reason i avoided downloading them and went for mounting it over the network.
+
+Now we will have to mount the .vhd files separately to access it. I actually tried to access it via VM. My advice NEVER DO THAT AS YOU WILL END UP DESTROYING YOUR VBOX. damn!! It actually corrupted my vbox by removing a kernel module named “vboxdrv”…..
+
+I am gonna use nbd module (network block device, yes, i am gonna mount it over the network).
+How to mount a VirtualBox VDI image - Be the signal
+Don't believe the hype! It is entirely possible to mount a VirtualBox VDI image, just like a loopback filesystem... all…
+bethesignal.org
+
+This is the link which guides how to do that.
+navigating inside .vhd files
+
+After mounting 5.1 gb .vhd file as directed in the above blog post,we can navigate inside the image and can succesfully access the contents.
+keep in mind that you HAVE to mount it in ‘read only’ mode to make it work. Refer qemu-nbd -h’ on how to mount in read only mode.
+
+Now in a windows system, the credentials are stored in /Windows/System32/config directory. In this direcory, there is a SAM file and SYSTEM file which stores the passwords and other credentials in hashed form.
+
+To dump those hashes, the linux command is:
+
+samdump2 SYSTEM bootkey
+
+This will get you all the stored credentials in hashed form.
+
+    root@kali:~/HackTheBox/machines/bastion# cat user_hash
+    *disabled* Administrator:500:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::
+    *disabled* Guest:501:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::
+    L4mpje:1000:aad3b435b51404eeaad3b435b51404ee:26112010952d963c8dc4217daec986d9:::
+
+So there is the hashed password for user L4mpje. I will be using a website to crack this hash and obtain the clear-text password.
+Hash Cracker Page - Over 312.072 billion cracked hashes - HashKiller.co.uk
+HashKiller.co.uk - Your free online hash lookup service and encryption website - Online hash Cracker
+hashkiller.co.uk
+
+cracking the L4mpj hash (26112010952d963c8dc4217daec986d9), we got the clear text password for L4mpje user.
+cleartext password for user L4mpje
+
+The only place where this password can be supplied is ssh login we saw earlier in nmap scan output. Connecting via ssh to user L4mpje…
+navigating via ssh in L4mpje home folder
+
+we got the user hash as user.txt. To view a text file in windows cmd, enter type user.txt
+Getting root access:-
+
+Now we gotta navigate each directory (including hidden ones) to get to root. In windows cmd, hidden directories can be seen by dir /adh command .
+
+Now, from here the only method to get root is enumeration, so you gotta explore each and every folder in the user L4mpje home directory. To see th structure of such a big folder, i use tree command to get a complete file structure.
+
+The password for installed programs and their configurations in windows are stored in /appdata/Roaming directory. So navigating to /Appdata/Roaming.
+
+    l4mpje@BASTION C:\Users\L4mpje\AppData\Roaming>dir
+    Volume in drive C has no label.
+    Volume Serial Number is 0CB3-C487
+
+    Directory of C:\Users\L4mpje\AppData\Roaming
+
+    22–02–2019 15:01 <DIR> .
+    22–02–2019 15:01 <DIR> ..
+    22–02–2019 14:50 <DIR> Adobe
+    22–02–2019 15:03 <DIR> mRemoteNG
+    0 File(s) 0 bytes
+    4 Dir(s) 11.383.197.696 bytes free
+
+    l4mpje@BASTION C:\Users\L4mpje\AppData\Roaming>
+
+All the installed programs are listed in this direcory, among which mRemoteNG is a bit suspicious because it’s not a regular program which the user will install. Googling about it, we come to know that it’s a remote connection manager to manage RDP, VNC and other connections
+
+    mRemoteNG is the next generation of mRemote, open source, tabbed, multi-protocol, remote connections manage
+
+Now, we will have to know about this application via googling it. Enumerate as much as you can.There is this one thing about this application.
+
+    The connection list is stored in the file “%userprofile%\AppData\Roaming\mRemoteNG\confCons.xml”
+
+This application stores the list of all connection and their encrypted password in a confCons.xml file!!! Interesting. Should check it out.
+inside mRemoteNG folder
+
+enter the command type confcons.xml to view the content inside the xml file.
+encrypted admin password in confcons.xml file
+
+As you search about mremoteNG program, you will know the encryption mechanism and how to recover the plain text password from it. There is a blog post regarding all this issue.
+Stealing Passwords from mRemote
+If you don't know mRemote is a tabbed remote connection manager for Windows. It can store and manage a number of…
+cosine-security.blogspot.com
+
+Now from here there are two different ways to get admin password.
+
+(1). One can download the xml file and then install mremoteNG in windows VM, and then replace the original xml file with the one obtained from box. http://dynamic-datacenter.be/?p=168
+
+(2).The other method doesn’t require any windows host. Linux is more than enough. In this method the encrypted password is cracked using scripts available online. Those scripts will give you the clear text password which can be used to ssh as administrator and obtain the root hash. Since my windows VM was messed up while mounting the .vhd file, i have to go through this way.
+kmahyyg/mremoteng-decrypt
+HacktheBox Bastion mRemoteNG Config File Decrypt. Contribute to kmahyyg/mremoteng-decrypt development by creating an…
+github.com
+
+this is the script to decrypt that password. Download the jar file and execute it by entering java -jar <FILE_NAME> <ENCRYPTED_PASSWORD> . It will give you the clear text password for logging in as admin.
+logged in as administrator.
+
+That’s it. We got the root hash.

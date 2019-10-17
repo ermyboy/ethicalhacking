@@ -61,7 +61,8 @@ Alternatively, some may find that it better suits their workflow to connect to M
 
 Note: If you have password authentication enabled for root, as described in the preceding paragraphs, you will need to use a different command to access the MySQL shell. The following will run your MySQL client with regular user privileges, and you will only gain administrator privileges within the database by authenticating:
 
-    mysql -u root -p
+    exit
+
 
 From there, create a new user and give it a strong password:
 
@@ -124,3 +125,8 @@ Uptime:         30 min 54 sec
 Threads: 1  Questions: 12  Slow queries: 0  Opens: 115  Flush tables: 1  Open tables: 34  Queries per second avg: 0.006
 
 This means MySQL is up and running.
+
+
+******PHP MYADMIN****************
+sudo apt-get install phpmyadmin
+sudo ln -s /usr/share/phpmyadmin/  /var/www/phpmyadmin

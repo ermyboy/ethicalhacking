@@ -1,9 +1,6 @@
 Aggiornare VM Ware Tools
     apt-get install open-vm-tools-desktop -y
 
-CentOS
-    aggiornamento sistema operativo
-
 Ubuntu - Riavviare il servizio di rete
     sudo  systemctl restart NetworkManager.service
 
